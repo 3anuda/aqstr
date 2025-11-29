@@ -9,24 +9,25 @@ $dbname = "aqmola_start";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-if ($conn->connect_error) {
-    die(json_encode(["error" => "Connection failed: " . $conn->connect_error]));
+$type = isset($_GET['type']) ? $_GET['type'] : 'startups';
+
+if ($type == 'events') {
+    $sql = "SELECT * FROM events ORDER BY id DESC";
+} elseif ($type == 'teams') {
+    $sql = "SELECT * FROM teams ORDER BY id DESC";
+} else {
+    $sql = "SELECT * FROM startups ORDER BY id DESC";
 }
 
-$conn->set_charset("utf8");
-
-$sql = "SELECT * FROM startups ORDER BY id DESC";
 $result = $conn->query($sql);
-
-$projects = array();
+$data = array();
 
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-        $projects[] = $row;
+        $data[] = $row;
     }
 }
 
-echo json_encode($projects, JSON_UNESCAPED_UNICODE);
-
+echo json_encode($data, JSON_UNESCAPED_UNICODE);
 $conn->close();
 ?>
